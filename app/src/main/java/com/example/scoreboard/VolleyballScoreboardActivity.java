@@ -9,37 +9,69 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class VolleyballScoreboardActivity extends AppCompatActivity {
+    // Constant values
+    public static final int BASE_SCORE = 25;
+    public static final int TIEBREAKER_SCORE = 15;
+    public static final int MAX_IN_PLAYERS = 6;
+
+    // Game scoring values
     public int scoreTeamA = 0;
     public int scoreTeamB = 0;
     public int setsWonA = 0;
     public int setsWonB = 0;
     public int setNumber = 1;
-    public int maxSets = 5;
-    public int[][] setScores;
-    public static final int BASE_SCORE = 25;
-    public static final int TIEBREAKER_SCORE = 15;
-    public int maxScore = BASE_SCORE;
-    public String[] teamAPlayers = new String[6];
-    public String[] teamBPlayers = new String[6];
-    public Button[] teamAButtons = new Button[6];
-    public Button[] teamBButtons = new Button[6];
-    public int[][] teamAScores = new int[7][maxSets];
-    public int[][] teamBScores = new int[7][maxSets];
+    public int maxSets;
     public int rotA = 0;
     public int rotB = 0;
-    public boolean isTeamABallPos;
+    public int maxScore;
+    public int[][] setScores;
+    public int[][] teamAScores;
+    public int[][] teamBScores;
+
+    // UI Components
+    public Button[] teamAButtons = new Button[MAX_IN_PLAYERS];
+    public Button[] teamBButtons = new Button[MAX_IN_PLAYERS];
     public TextView[] ballPosLabel = new TextView[2];
+    public TextView[] teamNameLabel = new TextView[2];
+    public TextView[] teamScoreLabel = new TextView[2];
+    public String teamAName;
+    public String teamBName;
+
+    public String[] teamAPlayers = new String[6];
+    public String[] teamBPlayers = new String[6];
+    public boolean isTeamABallPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volleyball_scoreboard);
-        setScores = new int[2][maxSets];
-        TextView teamAName = (TextView) findViewById(R.id.teamNameA);
-        teamAName.setText("Team A");
-        TextView teamBName = (TextView) findViewById(R.id.teamNameB);
-        teamBName.setText("Team B");
+        maxScore = BASE_SCORE;
+        maxSets = 5;
 
+        setScores = new int[2][maxSets];
+        teamAScores = new int[7][maxSets];
+        teamBScores = new int[7][maxSets];
+
+        teamAName = "Team ATeam ATeam ATeam A";
+        teamBName = "Team B";
+
+        // Displays respective names of teams
+        teamNameLabel[0] = (TextView) findViewById(R.id.teamNameA);
+        teamNameLabel[1] = (TextView) findViewById(R.id.teamNameB);
+        teamNameLabel[0].setText(teamAName);
+        teamNameLabel[1].setText(teamBName);
+
+        // Ball possession label
+        isTeamABallPos = true;
+        ballPosLabel[0] = (TextView) findViewById(R.id.ballA);
+        ballPosLabel[1] = (TextView) findViewById(R.id.ballB);
+        toggleBallPossession(0, 1);
+
+        // Score label
+        teamScoreLabel[0] = (TextView) findViewById(R.id.scoreA);
+        teamScoreLabel[1] = (TextView) findViewById(R.id.scoreB);
+
+        // Display respective names of players
         teamAButtons[0] = (Button) findViewById(R.id.player_A1);
         teamAButtons[1] = (Button) findViewById(R.id.player_A2);
         teamAButtons[2] = (Button) findViewById(R.id.player_A3);
@@ -52,141 +84,163 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         teamBButtons[3] = (Button) findViewById(R.id.player_B4);
         teamBButtons[4] = (Button) findViewById(R.id.player_B5);
         teamBButtons[5] = (Button) findViewById(R.id.player_B6);
-        for (int i = 0; i < 6; i++) {
-            teamAPlayers[i] = String.valueOf(i + 1);
-            teamBPlayers[i] = String.valueOf(i + 1);
+        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
+            teamAPlayers[i] = "A" + String.valueOf(i + 1);
+            teamBPlayers[i] = "B" + String.valueOf(i + 1);
             teamAButtons[i].setText(teamAPlayers[i]);
             teamBButtons[i].setText(teamBPlayers[i]);
         }
-
-        ballPosLabel[0] = (TextView) findViewById(R.id.ballA);
-        ballPosLabel[1] = (TextView) findViewById(R.id.ballB);
-
-        isTeamABallPos = true;
-        ballPosLabel[0].setVisibility(View.VISIBLE);
-        ballPosLabel[1].setVisibility(View.INVISIBLE);
     }
 
+    /*
+       Point System Notes:
+       - Player scores array column size is total players + 1
+         additional 1 is allocated for opponent errors
+     */
+
+    // Credit point for player in Zone 1
     public void add_1(View v) {
-        if (v.getId() == R.id.player_A1) add(true, 0);
-        else add(false, 0);
+        if (v.getId() == R.id.player_A1) score(true, 0);
+        else score(false, 0);
     }
 
+    // Credit point for player in Zone 2
     public void add_2(View v) {
-        if (v.getId() == R.id.player_A2) add(true, 1);
-        else add(false, 1);
+        if (v.getId() == R.id.player_A2) score(true, 1);
+        else score(false, 1);
     }
 
+    // Credit point for player in Zone 3
     public void add_3(View v) {
-        if (v.getId() == R.id.player_A3) add(true, 2);
-        else add(false, 2);
+        if (v.getId() == R.id.player_A3) score(true, 2);
+        else score(false, 2);
     }
 
+    // Credit point for player in Zone 4
     public void add_4(View v) {
-        if (v.getId() == R.id.player_A4) add(true, 3);
-        else add(false, 3);
+        if (v.getId() == R.id.player_A4) score(true, 3);
+        else score(false, 3);
     }
 
+    // Credit point for player in Zone 5
     public void add_5(View v) {
-        if (v.getId() == R.id.player_A5) add(true, 4);
-        else add(false, 4);
+        if (v.getId() == R.id.player_A5) score(true, 4);
+        else score(false, 4);
     }
 
+    // Credit point for player in Zone 6
     public void add_6(View v) {
-        if (v.getId() == R.id.player_A6) add(true, 5);
-        else add(false, 5);
+        if (v.getId() == R.id.player_A6) score(true, 5);
+        else score(false, 5);
     }
 
-    private void add(boolean isScoreFromLeft, int buttonOffset) {
+    // Add point
+    private void score(boolean isScoreFromLeft, int buttonOffset) {
         if (isScoreFromLeft) {
-            if (setNumber % 2 == 1) {
-                addA(R.id.scoreA, buttonOffset);
-            } else {
-                addB(R.id.scoreB, buttonOffset);
-            }
+            if (setNumber % 2 == 1) scoreA(buttonOffset);
+            else scoreB(buttonOffset);
         } else {
-            if (setNumber % 2 == 1) {
-                addB(R.id.scoreB, buttonOffset);
-            } else {
-                addA(R.id.scoreB, buttonOffset);
-            }
+            if (setNumber % 2 == 1) scoreB(buttonOffset);
+            else scoreA(buttonOffset);
         }
 
+        // Determine if a team wins the set
         if ((scoreTeamA - scoreTeamB) >= 2 && scoreTeamA >= maxScore) {
             Toast.makeText(this, "Team A wins! Score: " + scoreTeamA + "-" + scoreTeamB, Toast.LENGTH_SHORT).show();
             setsWonA++;
-            afterWin(true);
+            postSetProcess();
         } else if ((scoreTeamB - scoreTeamA) >= 2 && scoreTeamB >= maxScore) {
             Toast.makeText(this, "Team B wins! Score: " + scoreTeamB + "-" + scoreTeamA, Toast.LENGTH_SHORT).show();
             setsWonB++;
-            afterWin(false);
+            postSetProcess();
         }
 
-        String s = "Team A: ";
-        String t = "Team B: ";
-        for (int i = 1; i <= 6; i++) {
+        // Score Logs
+        String s = "(" + scoreTeamA + "): ";
+        String t = "(" + scoreTeamB + "): ";
+        for (int i = 0; i <= 6; i++) {
             s = s.concat("[" + String.valueOf(teamAScores[i][setNumber - 1]) + "] ");
             t = t.concat("[" + String.valueOf(teamBScores[i][setNumber - 1]) + "] ");
         }
-        Log.e("SCORE! ", s.concat(t));
-
+        Log.e("Team A", s);
+        Log.e("Team B", t);
     }
 
-    private void addA(int viewId, int buttonOffset) {
-        teamAScores[((rotA + buttonOffset) % 6) + 1][setNumber - 1]++;
+    // Player from Team A (team in left) gets a point
+    private void scoreA(int buttonOffset) {
+        teamAScores[((rotA + buttonOffset) % MAX_IN_PLAYERS) + 1][setNumber - 1]++;
         scoreTeamA++;
-        TextView currentScore = (TextView) findViewById(viewId);
-        currentScore.setText(String.valueOf(scoreTeamA));
-        if (!isTeamABallPos) {
-            // change
-            ballPosLabel[0].setVisibility(View.VISIBLE);
-            ballPosLabel[1].setVisibility(View.INVISIBLE);
-            isTeamABallPos = true;
-            rotA = (rotA + 1) % 6;
-
-            for (int i = 0; i < 6; i++) {
-                teamAButtons[i].setText(teamAPlayers[(i + rotA) % 6]);
+        // change
+        if (setNumber % 2 == 1) {
+            teamScoreLabel[0].setText(String.valueOf(scoreTeamA));
+            toggleBallPossession(0, 1);
+            if (!isTeamABallPos) {
+                rotateA(teamAButtons);
+                isTeamABallPos = true;
+            }
+        } else {
+            teamScoreLabel[1].setText(String.valueOf(scoreTeamA));
+            toggleBallPossession(1, 0);
+            if (!isTeamABallPos) {
+                rotateA(teamBButtons);
+                isTeamABallPos = true;
             }
         }
     }
 
-    private void addB(int viewId, int buttonOffset) {
-        teamBScores[((rotB + buttonOffset) % 6) + 1][setNumber - 1]++;
+    // Player from Team B (team in right) gets a point
+    private void scoreB(int buttonOffset) {
+        teamBScores[((rotB + buttonOffset) % MAX_IN_PLAYERS) + 1][setNumber - 1]++;
         scoreTeamB++;
-        TextView currentScore = (TextView) findViewById(viewId);
-        currentScore.setText(String.valueOf(scoreTeamB));
-        if (isTeamABallPos) {
-            // change
-            ballPosLabel[0].setVisibility(View.INVISIBLE);
-            ballPosLabel[1].setVisibility(View.VISIBLE);
-            isTeamABallPos = false;
-            rotB = (rotB + 1) % 6;
-
-            for (int i = 0; i < 6; i++) {
-                teamBButtons[i].setText(teamBPlayers[(i + rotA) % 6]);
+        // change
+        if (setNumber % 2 == 1) {
+            teamScoreLabel[1].setText(String.valueOf(scoreTeamB));
+            toggleBallPossession(1, 0);
+            if (isTeamABallPos) {
+                rotateB(teamBButtons);
+                isTeamABallPos = false;
+            }
+        } else {
+            teamScoreLabel[0].setText(String.valueOf(scoreTeamB));
+            toggleBallPossession(0, 1);
+            if (isTeamABallPos) {
+                rotateB(teamAButtons);
+                isTeamABallPos = false;
             }
         }
     }
 
-    private void afterWin(boolean isSetWinnerTeamA) {
+    // SUPPLEMENTAL FUNCTIONS (for code optimality)
+    private void toggleBallPossession(int showIndex, int hideIndex) {
+        ballPosLabel[showIndex].setVisibility(View.VISIBLE);
+        ballPosLabel[hideIndex].setVisibility(View.INVISIBLE);
+    }
+
+    private void rotateA(Button[] teamAButtonLocation) {
+        rotA = (rotA + 1) % MAX_IN_PLAYERS;
+
+        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
+            teamAButtonLocation[i].setText(teamAPlayers[(i + rotA) % MAX_IN_PLAYERS]);
+        }
+    }
+
+    private void rotateB(Button[] teamBButtonLocation) {
+        rotB = (rotB + 1) % MAX_IN_PLAYERS;
+
+        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
+            teamBButtonLocation[i].setText(teamBPlayers[(i + rotB) % MAX_IN_PLAYERS]);
+        }
+    }
+
+    private void postSetProcess() {
         // Save set score
         setScores[0][setNumber - 1] = scoreTeamA;
         setScores[1][setNumber - 1] = scoreTeamB;
 
-        // Update set score in app screen
-        TextView teamAName = (TextView) findViewById(R.id.teamNameA);
-        TextView teamBName = (TextView) findViewById(R.id.teamNameB);
+        changePlayerCourt(false);
 
-        if (setNumber % 2 == 1) {
-            teamAName.setText("Team B");
-            teamBName.setText("Team A");
-        } else {
-            teamAName.setText("Team A");
-            teamBName.setText("Team B");
-        }
-
-        for (int i = 0; i < setNumber; i++) {
-            switch (i + 1) {
+        for (int i = 1; i <= setNumber; i++) {
+            switch (i) {
                 case 1:
                     updateSetScore(R.id.set1A, R.id.set1B, 1);
                     break;
@@ -214,6 +268,10 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
             setNumber++;
             scoreTeamA = 0;
             scoreTeamB = 0;
+            rotA = 0;
+            rotB = 0;
+            isTeamABallPos = setNumber % 2 == 1;
+            toggleBallPossession(0, 1);
 
             // Update values (App screen)
             TextView setNo = (TextView) findViewById(R.id.setNumber);
@@ -227,6 +285,40 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         }
     }
 
+    private void changePlayerCourt(boolean isLastSet) {
+        int rotationA = 0;
+        int rotationB = 0;
+
+        if (isLastSet) {
+            rotationA = rotB;
+            rotationB = rotA;
+            teamScoreLabel[0].setText(String.valueOf(scoreTeamB));
+            teamScoreLabel[1].setText(String.valueOf(scoreTeamA));
+        } else {
+            teamScoreLabel[0].setText("0");
+            teamScoreLabel[1].setText("0");
+        }
+
+        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
+            if (setNumber % 2 == 1) {
+                teamAButtons[i].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
+                teamBButtons[i].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
+            } else {
+                teamAButtons[i].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
+                teamBButtons[i].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
+            }
+        }
+
+        // Update team name in app screen
+        if (setNumber % 2 == 1) {
+            teamNameLabel[0].setText(teamBName);
+            teamNameLabel[1].setText(teamAName);
+        } else {
+            teamNameLabel[0].setText(teamAName);
+            teamNameLabel[1].setText(teamBName);
+        }
+    }
+
     private void updateSetScore(int teamA, int teamB, int setNo) {
         TextView scoreA = (TextView) (setNumber % 2 == 0 ? findViewById(teamA) : findViewById(teamB));
         TextView scoreB = (TextView) (setNumber % 2 == 0 ? findViewById(teamB) : findViewById(teamA));
@@ -234,10 +326,11 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         scoreB.setText(String.valueOf(setScores[1][setNo - 1]));
     }
 
-    // To-do:
+    // TODO: Undo point
     public void undo(View v) {
     }
 
+    // TODO: Add confirmation dialog to discard progress
     @Override
     public void onBackPressed() {
 
