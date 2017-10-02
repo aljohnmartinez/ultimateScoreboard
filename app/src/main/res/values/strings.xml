@@ -1,10 +1,38 @@
 <resources>
     <string name="app_name">Scoreboard</string>
+
     <string name="add_label">Add</string>
     <string name="undo_label">Undo</string>
     <string name="error_label">Opp. Error</string>
 
     <string name="default_team_label">Team Name</string>
+    <string name="default_team_A_label">Team A</string>
+    <string name="default_team_B_label">Team B</string>
     <string name="default_score_label">0</string>
     <string name="default_set_label">1</string>
+
+    <string name="game_details_label">Game Details</string>
+    <string name="team_details_label">Team Details</string>
+    <string name="team_color_label">Team Color</string>
+    <string name="set_count_label">Sets to Win</string>
+    <string name="max_pts_label">Max Points</string>
+    <string name="first_serve_label">First Serve</string>
+    <string name="left_court_label">Left Court</string>
+    <string name="right_court_label">Right Court</string>
+    <string name="left_abbr_label">L</string>
+    <string name="right_abbr_label">R</string>
+    <string name="start_label">Start Game</string>
+
+    <string-array name="max_set_options">
+        <item name="3">3</item>
+        <item name="2">2</item>
+        <item name="1">1</item>
+    </string-array>
+
+    <string-array name="max_point_options">
+        <item name="25">25</item>
+        <item name="21">21</item>
+        <item name="15">15</item>
+        <item name="10">10</item>
+    </string-array>
 </resources>
