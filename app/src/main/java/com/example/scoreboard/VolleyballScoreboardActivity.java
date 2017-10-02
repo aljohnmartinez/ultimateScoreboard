@@ -325,16 +325,14 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         int rotationB = 0;
 
         if (isLastSet) {
-            rotationA = rotB;
-            rotationB = rotA;
+            rotationA = rotA;
+            rotationB = rotB;
             teamScoreLabel[0].setText(String.valueOf(scoreTeamB));
             teamScoreLabel[1].setText(String.valueOf(scoreTeamA));
 
             isTeamALeftPos = !isTeamALeftPos;
             if (isTeamABallPos) toggleBallPossession(1, 0);
             else toggleBallPossession(0, 1);
-
-            isTeamABallPos = !isTeamABallPos;
 
             rotA = rotationB;
             rotB = rotationA;
