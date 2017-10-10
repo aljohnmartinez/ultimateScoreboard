@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -27,7 +28,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="4dp"
                     android:layout_marginTop="4dp"
-                    android:background="@android:color/holo_blue_dark"
+                    android:background="@android:color/holo_green_dark"
                     android:maxEms="2"
                     android:minEms="1"
                     android:textSize="24sp" />
@@ -40,6 +41,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/default_team_label"
+                    android:textColor="@android:color/black"
                     android:textSize="20sp" />
             </LinearLayout>
 
@@ -52,7 +54,9 @@
                 android:maxEms="2"
                 android:minEms="1"
                 android:text="@string/default_score_label"
-                android:textSize="96sp" />
+                android:textColor="@android:color/black"
+                android:textSize="96sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TableLayout
@@ -229,6 +233,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/default_team_label"
+                    android:textColor="@android:color/black"
                     android:textSize="20sp" />
 
                 <TextView
@@ -253,102 +258,211 @@
                 android:maxEms="2"
                 android:minEms="1"
                 android:text="@string/default_score_label"
-                android:textSize="96sp" />
+                android:textColor="@android:color/black"
+                android:textSize="96sp"
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:stretchColumns="*">
+        android:orientation="horizontal">
 
-        <TableRow>
-            <Button
-                android:id="@+id/player_A4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_4"
-                android:text="@string/default_score_label" />
+        <TextView
+            android:id="@+id/player_A0"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_green_dark"
+            android:gravity="center"
+            android:onClick="add_0"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:text="@string/error_label"
+            android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_A3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_3"
-                android:text="@string/default_score_label" />
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:stretchColumns="*">
 
-            <Button
-                android:id="@+id/player_A2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_2"
-                android:text="@string/default_score_label" />
+            <TableRow>
 
-            <Button
-                android:id="@+id/player_B4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_4"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_A4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_light"
+                    android:gravity="center"
+                    android:onClick="add_4"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_B3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_3"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_A3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_light"
+                    android:gravity="center"
+                    android:onClick="add_3"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_B2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_2"
-                android:text="@string/default_score_label" />
-        </TableRow>
+                <TextView
+                    android:id="@+id/player_A2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_light"
+                    android:gravity="center"
+                    android:onClick="add_2"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-        <TableRow>
-            <Button
-                android:id="@+id/player_A5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_5"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_B4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_light"
+                    android:gravity="center"
+                    android:onClick="add_4"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_A6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_6"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_B3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_light"
+                    android:gravity="center"
+                    android:onClick="add_3"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_A1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_1"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_B2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_light"
+                    android:gravity="center"
+                    android:onClick="add_2"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+            </TableRow>
 
-            <Button
-                android:id="@+id/player_B5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_5"
-                android:text="@string/default_score_label" />
+            <TableRow>
 
-            <Button
-                android:id="@+id/player_B6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_6"
-                android:text="@string/default_score_label" />
+                <TextView
+                    android:id="@+id/player_A5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_dark"
+                    android:gravity="center"
+                    android:onClick="add_5"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
 
-            <Button
-                android:id="@+id/player_B1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="add_1"
-                android:text="@string/default_score_label" />
-        </TableRow>
-    </TableLayout>
+                <TextView
+                    android:id="@+id/player_A6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_dark"
+                    android:gravity="center"
+                    android:onClick="add_6"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/player_A1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_green_dark"
+                    android:gravity="center"
+                    android:onClick="add_1"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/player_B5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_dark"
+                    android:gravity="center"
+                    android:onClick="add_5"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/player_B6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_dark"
+                    android:gravity="center"
+                    android:onClick="add_6"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/player_B1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:background="@android:color/holo_blue_dark"
+                    android:gravity="center"
+                    android:onClick="add_1"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/default_score_label"
+                    android:textColor="@android:color/white" />
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/player_B0"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:onClick="add_0"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:text="@string/error_label"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 </LinearLayout>

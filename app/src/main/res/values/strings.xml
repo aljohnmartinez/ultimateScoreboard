@@ -3,7 +3,8 @@
 
     <string name="add_label">Add</string>
     <string name="undo_label">Undo</string>
-    <string name="error_label">Opp. Error</string>
+    <string name="error_label">Opp.\nError</string>
+    <string name="reset_label">Reset Game</string>
 
     <string name="default_team_label">Team Name</string>
     <string name="default_team_A_label">Team A</string>
