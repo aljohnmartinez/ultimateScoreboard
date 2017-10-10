@@ -1,12 +1,14 @@
 package com.example.scoreboard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class VolleyballScoreboardActivity extends AppCompatActivity {
     // Constant values
@@ -35,8 +37,8 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
     public int[][] teamBScores;
 
     // UI Components
-    public Button[] teamAButtons = new Button[MAX_IN_PLAYERS];
-    public Button[] teamBButtons = new Button[MAX_IN_PLAYERS];
+    public TextView[] teamAButtons = new TextView[MAX_IN_PLAYERS + 1];
+    public TextView[] teamBButtons = new TextView[MAX_IN_PLAYERS + 1];
     public TextView[] ballPosLabel = new TextView[2];
     public TextView[] teamNameLabel = new TextView[2];
     public TextView[] teamScoreLabel = new TextView[2];
@@ -69,43 +71,76 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         teamAName = getIntent().getStringExtra(TEAM_A_NAME);
         teamBName = getIntent().getStringExtra(TEAM_B_NAME);
 
+        isTeamAFirstServe = isTeamABallPos = getIntent().getBooleanExtra(FIRST_SERVE, false);
+        isTeamALeftPos = true;
+        isLastSetChangeCourtDone = false;
+
+        bindUI();
+
         // Displays respective names of teams
-        teamNameLabel[0] = (TextView) findViewById(R.id.teamNameA);
-        teamNameLabel[1] = (TextView) findViewById(R.id.teamNameB);
         teamNameLabel[0].setText(teamAName);
         teamNameLabel[1].setText(teamBName);
+
+        if (isTeamABallPos) toggleBallPossession(0, 1);
+        else toggleBallPossession(1, 0);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.volleyball_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_reset:
+                reset();
+                return true;
+
+            case R.id.action_undo:
+                undo(null);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    // Takes note of the UI elements
+    private void bindUI() {
+        teamNameLabel[0] = (TextView) findViewById(R.id.teamNameA);
+        teamNameLabel[1] = (TextView) findViewById(R.id.teamNameB);
 
         // Ball possession label
         ballPosLabel[0] = (TextView) findViewById(R.id.ballA);
         ballPosLabel[1] = (TextView) findViewById(R.id.ballB);
-        isTeamAFirstServe = isTeamABallPos = getIntent().getBooleanExtra(FIRST_SERVE, false);
-        isTeamALeftPos = true;
-        if (isTeamABallPos) toggleBallPossession(0, 1);
-        else toggleBallPossession(1, 0);
-        isLastSetChangeCourtDone = true;
 
         // Score label
         teamScoreLabel[0] = (TextView) findViewById(R.id.scoreA);
         teamScoreLabel[1] = (TextView) findViewById(R.id.scoreB);
 
         // Display respective names of players
-        teamAButtons[0] = (Button) findViewById(R.id.player_A1);
-        teamAButtons[1] = (Button) findViewById(R.id.player_A2);
-        teamAButtons[2] = (Button) findViewById(R.id.player_A3);
-        teamAButtons[3] = (Button) findViewById(R.id.player_A4);
-        teamAButtons[4] = (Button) findViewById(R.id.player_A5);
-        teamAButtons[5] = (Button) findViewById(R.id.player_A6);
-        teamBButtons[0] = (Button) findViewById(R.id.player_B1);
-        teamBButtons[1] = (Button) findViewById(R.id.player_B2);
-        teamBButtons[2] = (Button) findViewById(R.id.player_B3);
-        teamBButtons[3] = (Button) findViewById(R.id.player_B4);
-        teamBButtons[4] = (Button) findViewById(R.id.player_B5);
-        teamBButtons[5] = (Button) findViewById(R.id.player_B6);
+        teamAButtons[0] = (TextView) findViewById(R.id.player_A0);
+        teamAButtons[1] = (TextView) findViewById(R.id.player_A1);
+        teamAButtons[2] = (TextView) findViewById(R.id.player_A2);
+        teamAButtons[3] = (TextView) findViewById(R.id.player_A3);
+        teamAButtons[4] = (TextView) findViewById(R.id.player_A4);
+        teamAButtons[5] = (TextView) findViewById(R.id.player_A5);
+        teamAButtons[6] = (TextView) findViewById(R.id.player_A6);
+        teamBButtons[0] = (TextView) findViewById(R.id.player_B0);
+        teamBButtons[1] = (TextView) findViewById(R.id.player_B1);
+        teamBButtons[2] = (TextView) findViewById(R.id.player_B2);
+        teamBButtons[3] = (TextView) findViewById(R.id.player_B3);
+        teamBButtons[4] = (TextView) findViewById(R.id.player_B4);
+        teamBButtons[5] = (TextView) findViewById(R.id.player_B5);
+        teamBButtons[6] = (TextView) findViewById(R.id.player_B6);
         for (int i = 0; i < MAX_IN_PLAYERS; i++) {
             teamAPlayers[i] = "A" + String.valueOf(i + 1);
             teamBPlayers[i] = "B" + String.valueOf(i + 1);
-            teamAButtons[i].setText(teamAPlayers[i]);
-            teamBButtons[i].setText(teamBPlayers[i]);
+            teamAButtons[i + 1].setText(teamAPlayers[i]);
+            teamBButtons[i + 1].setText(teamBPlayers[i]);
         }
 
         // Binding of set scores list
@@ -139,11 +174,39 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         }
     }
 
+    private void reset() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder
+                .setTitle(R.string.reset_label)
+                .setMessage("Do you want to reset the game?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
     /*
-       Point System Notes:
-       - Player scores array column size is total players + 1
-         additional 1 is allocated for opponent errors
+       Point System Note:
+       Player scores array column size is total players + 1:
+       index 0 is reserved for opponent errors + 6 players
      */
+
+    // Credit point for opponent's error
+    public void add_0(View v) {
+        if (v.getId() == R.id.player_A0) score(true, -1);
+        else score(false, -1);
+    }
 
     // Credit point for player in Zone 1
     public void add_1(View v) {
@@ -198,25 +261,23 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
 
         // Determine if a team wins the set
         if ((scoreTeamA - scoreTeamB) >= 2 && scoreTeamA >= pointsToWin) {
-            Toast.makeText(this, teamAName + " wins! Score: " + scoreTeamA + "-" + scoreTeamB, Toast.LENGTH_SHORT).show();
             setsWonA++;
             postSetProcess();
         } else if ((scoreTeamB - scoreTeamA) >= 2 && scoreTeamB >= pointsToWin) {
-            Toast.makeText(this, teamBName + " wins! Score: " + scoreTeamB + "-" + scoreTeamA, Toast.LENGTH_SHORT).show();
             setsWonB++;
             postSetProcess();
-        } else if (setNumber == maxSets &&
+        } else if (setNumber == maxSets && !isLastSetChangeCourtDone &&
                 (scoreTeamA == pointsToChangeCourt || scoreTeamB == pointsToChangeCourt)) {
-            if (isLastSetChangeCourtDone) {
-                changePlayerCourt(true);
-                isLastSetChangeCourtDone = false;
-            }
+            changePlayerCourt(true);
+            isLastSetChangeCourtDone = true;
         }
     }
 
     // Player from Team A (team in left) gets a point
     private void scoreA(int buttonOffset) {
-        teamAScores[((rotA + buttonOffset) % MAX_IN_PLAYERS) + 1][setNumber - 1]++;
+        int scoreIndex = 0;
+        if (buttonOffset >= 0) scoreIndex = ((rotA + buttonOffset) % MAX_IN_PLAYERS) + 1;
+        teamAScores[scoreIndex][setNumber - 1]++;
         scoreTeamA++;
         // change
         if (isTeamALeftPos) {
@@ -238,7 +299,9 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
 
     // Player from Team B (team in right) gets a point
     private void scoreB(int buttonOffset) {
-        teamBScores[((rotB + buttonOffset) % MAX_IN_PLAYERS) + 1][setNumber - 1]++;
+        int scoreIndex = 0;
+        if (buttonOffset >= 0) scoreIndex = ((rotB + buttonOffset) % MAX_IN_PLAYERS) + 1;
+        teamBScores[scoreIndex][setNumber - 1]++;
         scoreTeamB++;
         // change
         if (isTeamALeftPos) {
@@ -264,13 +327,29 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         setScores[1][setNumber - 1] = scoreTeamB;
 
         updateSetScores();
+        togglePlayerButtons(false);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
         if (setsWonA == setsToWin) {
-            Toast.makeText(this, "Team A wins the game!", Toast.LENGTH_SHORT).show();
-            disablePlayerButtons();
+            alertDialogBuilder
+                    .setMessage(teamAName + " wins the match!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
         } else if (setsWonB == setsToWin) {
-            Toast.makeText(this, "Team B wins the game!", Toast.LENGTH_SHORT).show();
-            disablePlayerButtons();
+            alertDialogBuilder
+                    .setMessage(teamBName + " wins the match!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
         } else {
             // Update values (primitive)
             setNumber++;
@@ -288,36 +367,40 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
             if (isTeamABallPos == isTeamALeftPos) toggleBallPossession(0, 1);
             else toggleBallPossession(1, 0);
 
-            changePlayerCourt(false);
-
             if (setNumber == maxSets) {
                 if (pointsToWin == 10) pointsToWin = 10;
                 else pointsToWin = TIEBREAKER_SCORE;
                 pointsToChangeCourt = (int) Math.ceil(((double) pointsToWin) / 2);
             }
+
+            String title;
+            String message;
+            if (setScores[0][setNumber - 2] > setScores[1][setNumber - 2])
+                title = teamAName + " wins Set " + (setNumber - 1) + "!";
+            else
+                title = teamBName + " wins Set " + (setNumber - 1) + "!";
+
+            if (setsWonA > setsWonB)
+                message = teamAName + " now leads " + setsWonA + "-" + setsWonB + ".";
+            else if (setsWonB > setsWonA)
+                message = teamBName + " now leads " + setsWonB + "-" + setsWonA + ".";
+            else
+                message = " Game is now tied " + setsWonA + "-" + setsWonB + ".";
+
+            alertDialogBuilder
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setCancelable(false)
+                    .setPositiveButton("Start next set!", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            changePlayerCourt(false);
+                            togglePlayerButtons(true);
+                            dialog.cancel();
+                        }
+                    });
         }
-    }
-
-    // SUPPLEMENTAL FUNCTIONS (for code optimality)
-    private void toggleBallPossession(int showIndex, int hideIndex) {
-        ballPosLabel[showIndex].setVisibility(View.VISIBLE);
-        ballPosLabel[hideIndex].setVisibility(View.INVISIBLE);
-    }
-
-    private void rotateA(Button[] teamAButtonLocation) {
-        rotA = (rotA + 1) % MAX_IN_PLAYERS;
-
-        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
-            teamAButtonLocation[i].setText(teamAPlayers[(i + rotA) % MAX_IN_PLAYERS]);
-        }
-    }
-
-    private void rotateB(Button[] teamBButtonLocation) {
-        rotB = (rotB + 1) % MAX_IN_PLAYERS;
-
-        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
-            teamBButtonLocation[i].setText(teamBPlayers[(i + rotB) % MAX_IN_PLAYERS]);
-        }
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private void changePlayerCourt(boolean isLastSet) {
@@ -343,11 +426,11 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
 
         for (int i = 0; i < MAX_IN_PLAYERS; i++) {
             if (isTeamALeftPos) {
-                teamAButtons[i].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
-                teamBButtons[i].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
+                teamAButtons[i + 1].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
+                teamBButtons[i + 1].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
             } else {
-                teamAButtons[i].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
-                teamBButtons[i].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
+                teamAButtons[i + 1].setText(teamBPlayers[(i + rotationB) % MAX_IN_PLAYERS]);
+                teamBButtons[i + 1].setText(teamAPlayers[(i + rotationA) % MAX_IN_PLAYERS]);
             }
         }
 
@@ -363,10 +446,32 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         updateSetScores();
     }
 
-    private void disablePlayerButtons() {
+    // SUPPLEMENTAL FUNCTIONS (for code optimality)
+    private void rotateA(TextView[] teamAButtonLocation) {
+        rotA = (rotA + 1) % MAX_IN_PLAYERS;
+
         for (int i = 0; i < MAX_IN_PLAYERS; i++) {
-            teamAButtons[i].setEnabled(false);
-            teamBButtons[i].setEnabled(false);
+            teamAButtonLocation[i + 1].setText(teamAPlayers[(i + rotA) % MAX_IN_PLAYERS]);
+        }
+    }
+
+    private void rotateB(TextView[] teamBButtonLocation) {
+        rotB = (rotB + 1) % MAX_IN_PLAYERS;
+
+        for (int i = 0; i < MAX_IN_PLAYERS; i++) {
+            teamBButtonLocation[i + 1].setText(teamBPlayers[(i + rotB) % MAX_IN_PLAYERS]);
+        }
+    }
+
+    private void toggleBallPossession(int showIndex, int hideIndex) {
+        ballPosLabel[showIndex].setVisibility(View.VISIBLE);
+        ballPosLabel[hideIndex].setVisibility(View.INVISIBLE);
+    }
+
+    private void togglePlayerButtons(boolean status) {
+        for (int i = 1; i <= MAX_IN_PLAYERS; i++) {
+            teamAButtons[i].setEnabled(status);
+            teamBButtons[i].setEnabled(status);
         }
     }
 
@@ -382,13 +487,6 @@ public class VolleyballScoreboardActivity extends AppCompatActivity {
         }
     }
 
-    // TODO: Undo point
     public void undo(View v) {
-    }
-
-    // TODO: Add confirmation dialog to discard progress
-    @Override
-    public void onBackPressed() {
-
     }
 }
