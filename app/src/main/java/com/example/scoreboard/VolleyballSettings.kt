@@ -6,49 +6,45 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
+import androidx.databinding.DataBindingUtil
+import com.example.scoreboard.databinding.ActivityVolleyballSettingsBinding
 
 class VolleyballSettings : AppCompatActivity(), OnItemSelectedListener {
 
+    private var maxSetIndex: Int = 0
+    private var maxPtIndex: Int = 0
 
-    private val maxSetIndex = MutableLiveData<Int>()
-    private val maxPtIndex = MutableLiveData<Int>()
+    private lateinit var maxSetArray: Array<String>
+    private lateinit var maxPointArray: Array<String>
 
-    lateinit var maxSetArray : Array<String>
-    lateinit var maxPointArray : Array<String>
+    private lateinit var binding: ActivityVolleyballSettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_volleyball_settings)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_volleyball_settings)
 
         maxSetArray = resources.getStringArray(R.array.max_set_options)
         maxPointArray = resources.getStringArray(R.array.max_point_options)
 
-        val maxSetSpinner = findViewById<View>(R.id.maxSetOption) as Spinner
         val maxSetAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, maxSetArray)
-        maxSetSpinner.adapter = maxSetAdapter
-        maxSetSpinner.onItemSelectedListener = this
+        binding.maxSetsOption.adapter = maxSetAdapter
+        binding.maxSetsOption.onItemSelectedListener = this
 
-        val maxPtsSpinner = findViewById<View>(R.id.maxPtsOption) as Spinner
         val maxPtsAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, maxPointArray)
-        maxPtsSpinner.adapter = maxPtsAdapter
-        maxPtsSpinner.onItemSelectedListener = this
+        binding.maxPtsOption.adapter = maxPtsAdapter
+        binding.maxPtsOption.onItemSelectedListener = this
     }
 
     fun startGame(v: View?) {
         // Get values
-        val teamAName = findViewById<View>(R.id.teamAName) as EditText
-        val teamNameA = if (teamAName.text.isEmpty()) teamAName.hint.toString() else teamAName.text.toString()
+        val teamNameA = if (binding.leftTeamName.text.isNotEmpty()) binding.leftTeamName.text.toString() else binding.leftTeamName.hint.toString()
+        val teamNameB = if (binding.rightTeamName.text.isNotEmpty()) binding.rightTeamName.text.toString() else binding.rightTeamName.hint.toString()
 
-        val teamBName = findViewById<View>(R.id.teamBName) as EditText
-        val teamNameB = if (teamBName.text.isEmpty()) teamBName.hint.toString() else teamBName.text.toString()
-
-        val possessionSwitch = findViewById<View>(R.id.firstServeSwitch) as Switch
-        val isTeamAFirstServe = !possessionSwitch.isChecked
+        val isTeamAFirstServe = !binding.firstServeSwitch.isChecked
 
         val startGameIntent = Intent(this, VolleyballScoreboardActivity::class.java)
-        startGameIntent.putExtra(VolleyballScoreboardActivity.MAX_SETS, maxSetArray[maxSetIndex.value!!])
-        startGameIntent.putExtra(VolleyballScoreboardActivity.MAX_PTS, maxPointArray[maxPtIndex.value!!])
+        startGameIntent.putExtra(VolleyballScoreboardActivity.MAX_SETS, maxSetArray[maxSetIndex])
+        startGameIntent.putExtra(VolleyballScoreboardActivity.MAX_PTS, maxPointArray[maxPtIndex])
         startGameIntent.putExtra(VolleyballScoreboardActivity.TEAM_A_NAME, teamNameA)
         startGameIntent.putExtra(VolleyballScoreboardActivity.TEAM_B_NAME, teamNameB)
         startGameIntent.putExtra(VolleyballScoreboardActivity.FIRST_SERVE, isTeamAFirstServe)
@@ -57,8 +53,8 @@ class VolleyballSettings : AppCompatActivity(), OnItemSelectedListener {
 
     override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
         when (parent.id) {
-            R.id.maxSetOption -> maxSetIndex.value = position
-            R.id.maxPtsOption -> maxPtIndex.value = position
+            R.id.max_sets_option -> maxSetIndex = position
+            R.id.max_pts_option -> maxPtIndex = position
             else -> {
             }
         }

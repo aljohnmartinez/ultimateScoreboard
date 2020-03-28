@@ -1,183 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="4dp"
-    android:orientation="vertical">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/gameDetailTitle"
-            android:layout_width="wrap_content"
+            android:id="@+id/game_detail_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_marginStart="@dimen/dp_4"
+            android:layout_marginTop="@dimen/dp_4"
+            android:gravity="start|center_vertical"
             android:text="@string/game_details_label"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp">
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/setCountLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/set_count_label" />
-
-            <Spinner
-                android:id="@+id/maxSetOption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/maxPtsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/max_pts_label" />
-
-            <Spinner
-                android:id="@+id/maxPtsOption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-        </LinearLayout>
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/teamsDetailTitle"
+            android:id="@+id/max_sets_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/team_details_label"
-            android:textSize="20sp" />
+            android:text="@string/max_sets_label"
+            app:layout_constraintBottom_toTopOf="@id/team_detail_title"
+            app:layout_constraintEnd_toStartOf="@id/max_sets_option"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/game_detail_title" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <Spinner
+            android:id="@+id/max_sets_option"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:baselineAligned="false">
+            android:layout_marginEnd="51dp"
+            app:layout_constraintBottom_toTopOf="@id/team_detail_title"
+            app:layout_constraintEnd_toStartOf="@id/max_pts_label"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/max_sets_label"
+            app:layout_constraintTop_toBottomOf="@id/game_detail_title" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:orientation="vertical">
+        <TextView
+            android:id="@+id/max_pts_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max_pts_label"
+            app:layout_constraintBottom_toTopOf="@id/team_detail_title"
+            app:layout_constraintEnd_toStartOf="@id/max_pts_option"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/max_sets_option"
+            app:layout_constraintTop_toBottomOf="@id/game_detail_title" />
 
-                <TextView
-                    android:id="@+id/leftCourtLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:gravity="center"
-                    android:text="@string/left_court_label" />
+        <Spinner
+            android:id="@+id/max_pts_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/team_detail_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/max_pts_label"
+            app:layout_constraintTop_toBottomOf="@id/game_detail_title" />
 
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/team_detail_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/team_details_label"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/first_serve_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/max_sets_option" />
 
-                    <TableRow>
-                        <TextView
-                            android:id="@+id/teamANameLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="1dp"
-                            android:text="@string/default_team_label" />
 
-                        <EditText
-                            android:id="@+id/teamAName"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="@string/default_team_A_label" />
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
+        <TextView
+            android:id="@+id/left_court_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="1dp"
+            android:gravity="center"
+            android:text="@string/left_court_label"
+            app:layout_constraintBottom_toBottomOf="@id/first_serve_label"
+            app:layout_constraintEnd_toStartOf="@id/first_serve_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/first_serve_label" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.1"
-                android:gravity="center"
-                android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:text="@string/first_serve_label" />
+        <TextView
+            android:id="@+id/left_team_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="1dp"
+            android:text="@string/default_team_label"
+            app:layout_constraintBaseline_toBaselineOf="@id/left_team_name"
+            app:layout_constraintEnd_toStartOf="@id/left_team_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/left_court_label" />
 
-                <Switch
-                    android:id="@+id/firstServeSwitch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="@string/right_abbr_label"
-                    android:textOff="@string/left_abbr_label" />
-            </LinearLayout>
+        <EditText
+            android:id="@+id/left_team_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="23dp"
+            android:autofillHints=""
+            android:hint="@string/default_team_A_label"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@id/start_game_button"
+            app:layout_constraintEnd_toStartOf="@id/first_serve_switch"
+            app:layout_constraintStart_toEndOf="@id/left_team_name_label"
+            app:layout_constraintTop_toBottomOf="@id/left_court_label" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.45"
-                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/rightCourtLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="1dp"
-                    android:gravity="center"
-                    android:text="@string/right_court_label" />
+        <TextView
+            android:id="@+id/first_serve_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="11dp"
+            android:layout_marginBottom="1dp"
+            android:text="@string/first_serve_label"
+            app:layout_constraintBottom_toTopOf="@id/first_serve_switch"
+            app:layout_constraintEnd_toStartOf="@id/right_court_label"
+            app:layout_constraintStart_toEndOf="@id/left_court_label"
+            app:layout_constraintTop_toBottomOf="@id/team_detail_title" />
 
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
-                    <TableRow>
-                        <TextView
-                            android:id="@+id/teamBNameLabel"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="1dp"
-                            android:text="@string/default_team_label" />
+        <Switch
+            android:id="@+id/first_serve_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="25dp"
+            android:textOff="@string/left_abbr_label"
+            android:textOn="@string/right_abbr_label"
+            app:layout_constraintBottom_toTopOf="@id/start_game_button"
+            app:layout_constraintEnd_toStartOf="@id/right_team_name_label"
+            app:layout_constraintStart_toEndOf="@id/left_team_name"
+            app:layout_constraintTop_toBottomOf="@id/first_serve_label"
+            app:layout_constraintVertical_bias="0.0" />
 
-                        <EditText
-                            android:id="@+id/teamBName"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:hint="@string/default_team_B_label" />
-                    </TableRow>
-                </TableLayout>
-            </LinearLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/right_court_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:gravity="center"
+            android:text="@string/right_court_label"
+            app:layout_constraintTop_toTopOf="@id/first_serve_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/first_serve_label"
+            app:layout_constraintBottom_toBottomOf="@id/first_serve_label" />
+
+
+        <TextView
+            android:id="@+id/right_team_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/default_team_label"
+            app:layout_constraintBaseline_toBaselineOf="@id/right_team_name"
+            app:layout_constraintEnd_toStartOf="@id/right_team_name"
+            app:layout_constraintStart_toEndOf="@id/first_serve_switch"
+            app:layout_constraintTop_toBottomOf="@id/right_court_label" />
+
+        <EditText
+            android:id="@+id/right_team_name"
+            android:layout_width="@dimen/dp_0"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_4"
+            android:autofillHints=""
+            android:hint="@string/default_team_B_label"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@id/start_game_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/right_team_name_label"
+            app:layout_constraintTop_toBottomOf="@id/left_court_label" />
+
 
         <Button
-            android:id="@+id/startGameButton"
-            android:layout_width="match_parent"
+            android:id="@+id/start_game_button"
+            android:layout_width="@dimen/dp_0"
             android:layout_height="wrap_content"
             android:onClick="startGame"
-            android:text="@string/start_label" />
-    </LinearLayout>
-</ScrollView>
+            android:text="@string/start_label"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

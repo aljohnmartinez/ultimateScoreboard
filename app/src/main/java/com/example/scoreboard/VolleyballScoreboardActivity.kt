@@ -8,6 +8,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import com.example.scoreboard.databinding.ActivityVolleyballScoreboardBinding
+import kotlin.math.ceil
 
 class VolleyballScoreboardActivity : AppCompatActivity() {
     // Game scoring values
@@ -20,37 +23,37 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
     var maxSets = 0
     var rotA = 0
     var rotB = 0
-    var pointsToWin = 0
-    var pointsToChangeCourt = 0
-    lateinit var setScores: Array<IntArray>
-    lateinit var teamAScores: Array<IntArray>
-    lateinit var teamBScores: Array<IntArray>
+    private var pointsToWin = 0
+    private var pointsToChangeCourt = 0
+    private lateinit var setScores: Array<IntArray>
+    private lateinit var teamAScores: Array<IntArray>
+    private lateinit var teamBScores: Array<IntArray>
 
     // UI Components
-    var teamAButtons = arrayOfNulls<TextView>(MAX_IN_PLAYERS + 1)
-    var teamBButtons = arrayOfNulls<TextView>(MAX_IN_PLAYERS + 1)
-    var ballPosLabel = arrayOfNulls<TextView>(2)
-    var teamNameLabel = arrayOfNulls<TextView>(2)
-    var teamScoreLabel = arrayOfNulls<TextView>(2)
-    lateinit var setScoreList: Array<Array<TextView?>>
-    var teamAName: String? = null
-    var teamBName: String? = null
-    var teamAPlayers = arrayOfNulls<String>(6)
-    var teamBPlayers = arrayOfNulls<String>(6)
-    var isTeamABallPos : Boolean = false // Track server from the previous play = false
-    var isTeamAFirstServe : Boolean = false // Track first server (indicated by user) = false
-    var isTeamALeftPos : Boolean = false // Track if team registered in left court is in its position = false
-    var isLastSetChangeCourtDone = false
+    private var teamAButtons = arrayOfNulls<TextView>(MAX_IN_PLAYERS + 1)
+    private var teamBButtons = arrayOfNulls<TextView>(MAX_IN_PLAYERS + 1)
+    private var ballPosLabel = arrayOfNulls<TextView>(2)
+    private lateinit var setScoreList: Array<Array<TextView?>>
+    private var teamAName: String? = null
+    private var teamBName: String? = null
+    private var teamAPlayers = arrayOfNulls<String>(6)
+    private var teamBPlayers = arrayOfNulls<String>(6)
+    private var isTeamABallPos : Boolean = false // Track server from the previous play = false
+    private var isTeamAFirstServe : Boolean = false // Track first server (indicated by user) = false
+    private var isTeamALeftPos : Boolean = false // Track if team registered in left court is in its position = false
+    private var isLastSetChangeCourtDone = false
+
+    private lateinit var binding: ActivityVolleyballScoreboardBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_volleyball_scoreboard)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_volleyball_scoreboard)
 
         val maxSetStr = intent.getStringExtra(MAX_SETS)
-        setsToWin = Integer.valueOf(maxSetStr)
+        setsToWin = Integer.valueOf(maxSetStr ?: "3")
 
         val maxPoints = intent.getStringExtra(MAX_PTS)
-        pointsToWin = Integer.valueOf(maxPoints)
+        pointsToWin = Integer.valueOf(maxPoints ?: "25")
 
         maxSets = setsToWin * 2 - 1
 
@@ -66,8 +69,8 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         bindUI()
 
         // Displays respective names of teams
-        teamNameLabel[0]!!.text = teamAName
-        teamNameLabel[1]!!.text = teamBName
+        binding.teamNameA.text = teamAName
+        binding.teamNameB.text = teamBName
         if (isTeamABallPos) toggleBallPossession(0, 1) else toggleBallPossession(1, 0)
     }
 
@@ -92,16 +95,9 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
 
     // Takes note of the UI elements
     private fun bindUI() {
-        teamNameLabel[0] = findViewById<View>(R.id.teamNameA) as TextView
-        teamNameLabel[1] = findViewById<View>(R.id.teamNameB) as TextView
-
         // Ball possession label
         ballPosLabel[0] = findViewById<View>(R.id.ballA) as TextView
         ballPosLabel[1] = findViewById<View>(R.id.ballB) as TextView
-
-        // Score label
-        teamScoreLabel[0] = findViewById<View>(R.id.scoreA) as TextView
-        teamScoreLabel[1] = findViewById<View>(R.id.scoreB) as TextView
 
         // Display respective names of players
         teamAButtons[0] = findViewById<View>(R.id.player_A0) as TextView
@@ -165,8 +161,8 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
                 .setTitle(R.string.reset_label)
                 .setMessage("Do you want to reset the game?")
                 .setCancelable(false)
-                .setPositiveButton("Yes") { dialog, id -> finish() }
-                .setNegativeButton("No") { dialog, which -> dialog.cancel() }
+                .setPositiveButton("Yes") { _, _ -> finish() }
+                .setNegativeButton("No") { dialog, _ -> dialog.cancel() }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
@@ -247,14 +243,14 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         scoreTeamA++
         // change
         if (isTeamALeftPos) {
-            teamScoreLabel[0]!!.text = scoreTeamA.toString()
+            binding.scoreA.text = scoreTeamA.toString()
             toggleBallPossession(0, 1)
             if (!isTeamABallPos) {
                 rotateA(teamAButtons)
                 isTeamABallPos = !isTeamABallPos
             }
         } else {
-            teamScoreLabel[1]!!.text = scoreTeamA.toString()
+            binding.scoreB.text = scoreTeamA.toString()
             toggleBallPossession(1, 0)
             if (!isTeamABallPos) {
                 rotateA(teamBButtons)
@@ -271,14 +267,14 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         scoreTeamB++
         // change
         if (isTeamALeftPos) {
-            teamScoreLabel[1]!!.text = scoreTeamB.toString()
+            binding.scoreB.text = scoreTeamB.toString()
             toggleBallPossession(1, 0)
             if (isTeamABallPos) {
                 rotateB(teamBButtons)
                 isTeamABallPos = !isTeamABallPos
             }
         } else {
-            teamScoreLabel[0]!!.text = scoreTeamB.toString()
+            binding.scoreA.text = scoreTeamB.toString()
             toggleBallPossession(0, 1)
             if (isTeamABallPos) {
                 rotateB(teamAButtons)
@@ -294,47 +290,49 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         updateSetScores()
         togglePlayerButtons(false)
         val alertDialogBuilder = AlertDialog.Builder(this)
-        if (setsWonA == setsToWin) {
-            alertDialogBuilder
-                    .setMessage("$teamAName wins the match!")
-                    .setCancelable(false)
-                    .setPositiveButton("OK") { dialog, id -> dialog.cancel() }
-        } else if (setsWonB == setsToWin) {
-            alertDialogBuilder
-                    .setMessage("$teamBName wins the match!")
-                    .setCancelable(false)
-                    .setPositiveButton("OK") { dialog, id -> dialog.cancel() }
-        } else {
-            // Update values (primitive)
-            setNumber++
-            scoreTeamA = 0
-            scoreTeamB = 0
-            rotA = 0
-            rotB = 0
-
-            // Update values (App screen)
-            val setNo = findViewById<View>(R.id.setNumber) as TextView
-            setNo.text = setNumber.toString()
-            isTeamALeftPos = !isTeamALeftPos
-            isTeamABallPos = isTeamALeftPos == isTeamAFirstServe
-            if (isTeamABallPos == isTeamALeftPos) toggleBallPossession(0, 1) else toggleBallPossession(1, 0)
-            if (setNumber == maxSets) {
-                pointsToWin = if (pointsToWin == 10) 10 else TIEBREAKER_SCORE
-                pointsToChangeCourt = Math.ceil(pointsToWin.toDouble() / 2).toInt()
+        when {
+            setsWonA == setsToWin -> {
+                alertDialogBuilder
+                        .setMessage("$teamAName wins the match!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK") { dialog, _ -> dialog.cancel() }
             }
-            val title: String
-            val message: String
-            title = if (setScores[0][setNumber - 2] > setScores[1][setNumber - 2]) teamAName + " wins Set " + (setNumber - 1) + "!" else teamBName + " wins Set " + (setNumber - 1) + "!"
-            message = if (setsWonA > setsWonB) "$teamAName now leads $setsWonA-$setsWonB." else if (setsWonB > setsWonA) "$teamBName now leads $setsWonB-$setsWonA." else " Game is now tied $setsWonA-$setsWonB."
-            alertDialogBuilder
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setCancelable(false)
-                    .setPositiveButton("Start next set!") { dialog, id ->
-                        changePlayerCourt(false)
-                        togglePlayerButtons(true)
-                        dialog.cancel()
-                    }
+            setsWonB == setsToWin -> {
+                alertDialogBuilder
+                        .setMessage("$teamBName wins the match!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK") { dialog, _ -> dialog.cancel() }
+            }
+            else -> {
+                // Update values (primitive)
+                setNumber++
+                scoreTeamA = 0
+                scoreTeamB = 0
+                rotA = 0
+                rotB = 0
+
+                // Update values (App screen)
+                val setNo = findViewById<View>(R.id.setNumber) as TextView
+                setNo.text = setNumber.toString()
+                isTeamALeftPos = !isTeamALeftPos
+                isTeamABallPos = isTeamALeftPos == isTeamAFirstServe
+                if (isTeamABallPos == isTeamALeftPos) toggleBallPossession(0, 1) else toggleBallPossession(1, 0)
+                if (setNumber == maxSets) {
+                    pointsToWin = if (pointsToWin == 10) 10 else TIEBREAKER_SCORE
+                    pointsToChangeCourt = ceil(pointsToWin.toDouble() / 2).toInt()
+                }
+                val title = if (setScores[0][setNumber - 2] > setScores[1][setNumber - 2]) teamAName + " wins Set " + (setNumber - 1) + "!" else teamBName + " wins Set " + (setNumber - 1) + "!"
+                val message = if (setsWonA > setsWonB) "$teamAName now leads $setsWonA-$setsWonB." else if (setsWonB > setsWonA) "$teamBName now leads $setsWonB-$setsWonA." else " Game is now tied $setsWonA-$setsWonB."
+                alertDialogBuilder
+                        .setTitle(title)
+                        .setMessage(message)
+                        .setCancelable(false)
+                        .setPositiveButton("Start next set!") { dialog, _ ->
+                            changePlayerCourt(false)
+                            togglePlayerButtons(true)
+                            dialog.cancel()
+                        }
+            }
         }
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
@@ -346,15 +344,15 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         if (isLastSet) {
             rotationA = rotA
             rotationB = rotB
-            teamScoreLabel[0]!!.text = scoreTeamB.toString()
-            teamScoreLabel[1]!!.text = scoreTeamA.toString()
+            binding.scoreA.text = scoreTeamB.toString()
+            binding.scoreB.text = scoreTeamA.toString()
             isTeamALeftPos = !isTeamALeftPos
             if (isTeamABallPos) toggleBallPossession(1, 0) else toggleBallPossession(0, 1)
             rotA = rotationB
             rotB = rotationA
         } else {
-            teamScoreLabel[0]!!.setText(R.string.default_score_label)
-            teamScoreLabel[1]!!.setText(R.string.default_score_label)
+            binding.scoreA.text = getString(R.string.default_score_label)
+            binding.scoreB.text = getString(R.string.default_score_label)
         }
         for (i in 0 until MAX_IN_PLAYERS) {
             if (isTeamALeftPos) {
@@ -368,11 +366,11 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
 
         // Update team name in app screen
         if (isTeamALeftPos) {
-            teamNameLabel[0]!!.text = teamAName
-            teamNameLabel[1]!!.text = teamBName
+            binding.teamNameA.text = teamAName
+            binding.teamNameB.text = teamBName
         } else {
-            teamNameLabel[0]!!.text = teamBName
-            teamNameLabel[1]!!.text = teamAName
+            binding.teamNameA.text = teamBName
+            binding.teamNameB.text = teamAName
         }
         updateSetScores()
     }
@@ -416,7 +414,7 @@ class VolleyballScoreboardActivity : AppCompatActivity() {
         }
     }
 
-    fun undo(v: View?) {}
+    private fun undo(v: View?) {}
 
     companion object {
         // Constant values

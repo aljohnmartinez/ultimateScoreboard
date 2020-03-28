@@ -15,7 +15,7 @@
     <string name="game_details_label">Game Details</string>
     <string name="team_details_label">Team Details</string>
     <string name="team_color_label">Team Color</string>
-    <string name="set_count_label">Sets to Win</string>
+    <string name="max_sets_label">Sets to Win</string>
     <string name="max_pts_label">Max Points</string>
     <string name="first_serve_label">First Serve</string>
     <string name="left_court_label">Left Court</string>
